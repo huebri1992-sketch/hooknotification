@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enable notifications</title>
+  <title>Hook reminders</title>
   <style>
     :root { color-scheme: light; }
     body {
@@ -44,15 +44,27 @@
 </head>
 <body>
   <div class="card">
-    <h2>Enable notifications</h2>
-    <p>Allow Hook to send quick reminders when it is time to vote.</p>
-    <button id="enable-btn" type="button">Enable notifications</button>
+    <h2>Stay on track</h2>
+    <p>Enable notifications so Hook can remind you when it is time to vote.</p>
+    <button id="notifyBtn">Enable notifications</button>
   </div>
 
-  <script>
-    document.getElementById('enable-btn').addEventListener('click', function () {
-      window.parent.postMessage({ type: 'request-notification-permission' }, '*');
-    });
-  </script>
+<script>
+  const btn = document.getElementById('notifyBtn');
+
+  btn.addEventListener('click', async () => {
+    if (!('Notification' in window)) {
+      console.log('Notifications not supported');
+      return;
+    }
+
+    const permission = await Notification.requestPermission();
+    console.log('Permission:', permission);
+
+    if (permission === 'granted') {
+      new Notification('Hello!', { body: 'Notifications are enabled.' });
+    }
+  });
+</script>
 </body>
 </html>
