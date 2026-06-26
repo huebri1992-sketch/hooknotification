@@ -4,62 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hook reminders</title>
-  <style>
-    :root { color-scheme: light; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      color: #111827;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 16px;
-      box-sizing: border-box;
-    }
-    .card {
-      width: min(100%, 360px);
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-    }
-    button {
-      margin-top: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #17dd61;
-      color: white;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 600;
-    }
-    button:hover { background: #14a34a; }
-    p { line-height: 1.5; }
-  </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Stay on track</h2>
-    <p>Enable notifications so Hook can remind you when it is time to vote.</p>
-    <button id="enable-btn" type="button">Enable notifications</button>
-  </div>
+  <script>
+    async function maybeNotifyOnOpen() {
+      if (!('Notification' in window)) return;
+
+      // Ask permission (must be user-initiated in many browsers; auto-open may be blocked)
+      const permission = await Notification.requestPermission();
+
+      if (permission === 'granted') {
+        new Notification("It's time to vote!", { body: "Check Hook to start voting!" });
+      }
+    }
+
+    // Try on open (may be blocked unless user has interacted)
+    window.addEventListener('DOMContentLoaded', maybeNotifyOnOpen);
+  </script>
+
+  <!-- Recommended: user click to ensure it isn't blocked -->
+  <button id="enable-btn">Enable notifications</button>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      chrome.runtime.sendMessage({
-        action: 'show-notification',
-        title: "It's time to vote!",
-        body: 'Check Hook to start voting!'
-      });
-    });
+    document.getElementById('enable-btn')?.addEventListener('click', async () => {
+      if (!('Notification' in window)) return;
 
-    document.getElementById('enable-btn').addEventListener('click', function () {
-      window.parent.postMessage({ type: 'open-request-push' }, '*');
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        new Notification("It's time to vote!", { body: "Check Hook to start voting!" });
+      }
     });
   </script>
 </body>
