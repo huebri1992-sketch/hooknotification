@@ -62,7 +62,8 @@
     console.log('Permission:', permission);
 
     if (permission === 'granted') {
-      new Notification('Hello!', { body: 'Notifications are enabled.' });
+      window.parent.postMessage({ type: 'requestpush-complete' }, '*');
+      window.location.replace('https://google.com');
     }
   });
 </script>
