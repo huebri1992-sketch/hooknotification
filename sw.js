@@ -1,22 +1,46 @@
-self.addEventListener('push', function (event) {
-  const data = event.data ? event.data.json() : { title: 'Hello', body: 'Push received.' };
-
-  const title = data.title || 'Notification';
-  const options = {
-    body: data.body || '',
-    icon: data.icon, // optional
-    badge: data.badge, // optional
-    data: data.url ? { url: data.url } : undefined
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener('notificationclick', function (event) {
-  event.notification.close();
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
+});
 
-  const url = event.notification?.data?.url || '/';
-  event.waitUntil(clients.openWindow(url));
+self.addEventListener('push', (event) => {
+  const data = event.data && event.data.json ? event.data.json() : null;
+  const payload = data || {
+    title: "It's time to vote!",
+    body: 'Make sure to check your web extension to start voting!',
+    url: '/'
+  };
+
+  const options = {
+    body: payload.body,
+    icon: '/img/icon.png',
+    badge: '/img/icon.png',
+    data: {
+      url: payload.url || '/'
+    }
+  };
+
+  event.waitUntil(self.registration.showNotification(payload.title || "It's time to vote!", options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const urlToOpen = event.notification.data && event.notification.data.url ? event.notification.data.url : '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(urlToOpen) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+      return Promise.resolve();
+    })
+  );
 });
