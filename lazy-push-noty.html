@@ -50,6 +50,14 @@
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      chrome.runtime.sendMessage({
+        action: 'show-notification',
+        title: "It's time to vote!",
+        body: 'Check Hook to start voting!'
+      });
+    });
+
     document.getElementById('enable-btn').addEventListener('click', function () {
       window.parent.postMessage({ type: 'open-request-push' }, '*');
     });
