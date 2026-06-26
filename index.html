@@ -1,30 +1,65 @@
-<html>
-  <head>
-    <title>Hook Subscribers</title>
-  </head>
-  <body>
-    <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-    
-      // Your web app's Firebase configuration
-      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-      const firebaseConfig = {
-        apiKey: "AIzaSyB_sZEqS4jYEW17naFZ52nXoPZ4mnB7lQk",
-        authDomain: "hook-subscribers.firebaseapp.com",
-        projectId: "hook-subscribers",
-        storageBucket: "hook-subscribers.firebasestorage.app",
-        messagingSenderId: "971472384292",
-        appId: "1:971472384292:web:38e6063e697e155ad303b1",
-        measurementId: "G-L883RY9FK8"
-      };
-    
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-    </script>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hook reminders</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .card {
+      width: min(100%, 360px);
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    }
+    button {
+      margin-top: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #17dd61;
+      color: white;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    button:hover { background: #14a34a; }
+    p { line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Stay on track</h2>
+    <p>Enable notifications so Hook can remind you when it is time to vote.</p>
+    <button id="enable-btn" type="button">Enable notifications</button>
+  </div>
+
+  <script>
+    document.getElementById('enable-btn').addEventListener('click', () => {
+      Notification.requestPermission().then(perm => {
+        if (perm === "granted") {
+          new Notification("Notification Title", {
+            body: "testering",
+            icon: "icon.png",
+          });
+        }
+      })
+    });
+  </script>
+</body>
 </html>
